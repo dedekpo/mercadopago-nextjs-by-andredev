@@ -58,8 +58,11 @@ export async function POST(req: NextRequest) {
         back_urls: {
           success: `${req.headers.get("origin")}/?status=sucesso`,
           failure: `${req.headers.get("origin")}/?status=falha`,
-          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Criamos uma rota para lidar com pagamentos pendentes
+          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Rota para pagamentos pendentes
         },
+      },
+      requestOptions: {
+        integratorId: process.env.MERCADO_PAGO_INTEGRATOR_ID as string, // Integrator ID
       },
     });
 
