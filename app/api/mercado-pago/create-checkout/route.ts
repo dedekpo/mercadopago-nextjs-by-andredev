@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Preference } from "mercadopago";
 import mpClient from "@/app/lib/mercado-pago";
-
+          
 export async function POST(req: NextRequest) {
   const { testeId, userEmail } = await req.json();
 
@@ -25,9 +25,10 @@ export async function POST(req: NextRequest) {
 
         items: [
           {
-            id: "id-do-seu-produto",
-            description: "Descrição do produto",
-            title: "Nome do produto",
+            id: "1234",
+            description: "Dispositivo de loja de comércio eletrônico móvel",
+            title: "Carregador portátil",
+            picture_url: "https://http2.mlstatic.com/frontend-assets/dx-devsite/images/imgHeroHomePT.png", 
             quantity: 1,
             unit_price: 9.99,
             currency_id: "BRL",
@@ -36,14 +37,14 @@ export async function POST(req: NextRequest) {
         ],
         payment_methods: {
           // Descomente para desativar métodos de pagamento
-          //   excluded_payment_methods: [
-          //     {
-          //       id: "bolbradesco",
-          //     },
+            excluded_payment_methods: [
+              {
+                id: "visa",
+              },
           //     {
           //       id: "pec",
           //     },
-          //   ],
+            ],
           //   excluded_payment_types: [
           //     {
           //       id: "debit_card",
@@ -52,17 +53,20 @@ export async function POST(req: NextRequest) {
           //       id: "credit_card",
           //     },
           //   ],
-          installments: 12, // Número máximo de parcelas permitidas - calculo feito automaticamente
+          installments: 6, // Número máximo de parcelas permitidas - calculo feito automaticamente
         },
         auto_return: "approved",
         back_urls: {
           success: `${req.headers.get("origin")}/?status=sucesso`,
           failure: `${req.headers.get("origin")}/?status=falha`,
-          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Criamos uma rota para lidar com pagamentos pendentes
+          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Rota para pagamentos pendentes
         },
       },
+      requestOptions: {
+        integratorId: process.env.MERCADO_PAGO_INTEGRATOR_ID as string, // Integrator ID
+      },
     });
-
+    
     if (!createdPreference.id) {
       throw new Error("No preferenceID");
     }
